@@ -9,7 +9,7 @@ org.gradle.configureondemand=true
 org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m -Dfile.encoding=UTF-8
 
 # Add these optimizations:
-android.enableR8=true
+# android.enableR8=true  #if by default support R8 don't need this line
 android.useAndroidX=true
 android.enableJetifier=true
 
@@ -70,7 +70,7 @@ android {
 }
 
 //-------------------------------------------------------
-# build command ---- under 15mb
+# build command for apk ---- under 15mb
 
 cd android
 ./gradlew clean
@@ -87,8 +87,12 @@ rm -rf build/ app/build/
 cd android
 ./gradlew assembleRelease
 
+//-------------------------------------------------------
+# build command for aab ---- under 15mb
 
-
+cd android
+./gradlew clean
+./gradlew bundleRelease -PreactNativeArchitectures=arm64-v8a
 
 
 
