@@ -1,0 +1,57 @@
+//-----------------------------------------
+When we install any new package in our project it took too much time to again rerun. Let's see how to we fix this issue
+
+Note: Before start you need to implement everything witch told about size reduce file. Link: https://github.com/jishan1019/Reduce-React-native-0.80.1-Apk-size-50mb-to-13mb-without-play-store/blob/main/Apk%20size%20reduce.txt
+
+//-----------------------------------------
+STEP 1: package.json
+
+"android": "react-native run-android --active-arch-only",
+"start": "RCT_METRO_PORT=8081 RCT_METRO_MAX_WORKERS=2 react-native start",
+
+//-----------------------------------------
+STEP 2: android/app/build.grandle
+
+project.ext.react = [
+    bundleInDebug: false,
+    bundleInRelease: true
+]
+
+android {
+   packagingOptions {
+            exclude 'lib/x86/**'
+            exclude 'lib/x86_64/**'
+    }
+
+    splits {
+        abi {
+            enable false
+        }
+    }
+
+}
+
+//-----------------------------------------
+STEP 3:
+
+After implement avobe code
+
+1. then you need to install new package witch you want
+2. after install complete new package then run below command
+
+cd android
+./gradlew clean
+cd ..
+npx react-native start --reset-cache
+rm -rf node_modules
+yarn install
+
+
+Everything is done. If anything running you need to stop using ctrl + c. now you need to rerun your project using yarn start and yarn android in separate terminal
+//-----------------------------------------
+
+NOTE: FOR EVERY TIME WHEN YOU INSTALL NEW PACKAGE YOU NEED TO FOLLOW STEP 3.
+
+
+
+
