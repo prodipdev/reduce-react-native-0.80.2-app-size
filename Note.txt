@@ -1,0 +1,95 @@
+//-----------------------------------------------
+# In your android/gradle.properties file add:
+org.gradle.daemon=true
+org.gradle.parallel=true
+org.gradle.configureondemand=true
+
+
+# Remove duplicate jvmargs and keep only:
+org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m -Dfile.encoding=UTF-8
+
+# Add these optimizations:
+android.enableR8=true
+android.useAndroidX=true
+android.enableJetifier=true
+
+android.defaults.buildfeatures.renderscript=false
+android.defaults.buildfeatures.mlmodelbinding=false
+
+//-------------------------------------------------------
+# In your android/app/proguard-rules.pro file add:
+
+-keep class com.facebook.react.** { *; }
+-keep class com.facebook.hermes.** { *; }
+-dontwarn com.facebook.hermes.**
+
+//-------------------------------------------------------
+# In your android/app/build.gradle file add:
+
+project.ext.react = [
+    enableHermes: true
+]
+
+android {
+     ndkVersion "27.1.12297006"  //Specific fix version use
+
+     defaultConfig {
+        resConfigs "en", "xxhdpi" // keep only needed languages and screen densities
+        ndk {
+            abiFilters "arm64-v8a" // 64-bit only
+        }
+      }
+
+      signingConfigs {
+         release {
+                   storeFile file('my-release-key.keystore')
+                  storePassword 'xxxxxx'
+                  keyAlias 'my-key-alias'
+                  keyPassword 'xxxxxx'
+              }
+      }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            crunchPngs true 
+            zipAlignEnabled true
+        }
+    }
+
+    packagingOptions {
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+        exclude 'lib/x86/**'
+        exclude 'lib/x86_64/**'
+    }
+
+}
+
+//-------------------------------------------------------
+# build command ---- under 15mb
+
+cd android
+./gradlew clean
+rm -rf build/ app/build/
+
+./gradlew assembleRelease \
+  -PreactNativeArchitectures=arm64-v8a \
+  -Porg.gradle.parallel=true \
+  -Porg.gradle.configureondemand=true
+
+
+- Note: Don't Use below command becouse when you use that it give generate apk size almost 43mb
+
+cd android
+./gradlew assembleRelease
+
+
+
+
+
+
+
