@@ -12,11 +12,6 @@ STEP 1: package.json
 //-----------------------------------------
 STEP 2: android/app/build.grandle
 
-project.ext.react = [
-    bundleInDebug: false,
-    bundleInRelease: true
-]
-
 android {
    packagingOptions {
             exclude 'lib/x86/**'
